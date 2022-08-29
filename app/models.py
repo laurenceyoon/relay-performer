@@ -14,6 +14,9 @@ class Piece(Base):
     schedules = relationship("Schedule", back_populates="piece")
     subpieces = relationship("SubPiece", back_populates="piece")
 
+    def __str__(self) -> str:
+        return f"{self.title}"
+
 
 class SubPiece(Base):
     __tablename__ = "subpieces"
