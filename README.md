@@ -25,5 +25,7 @@ $ sqlite3 ./sql_app.db < initial_data.sql
 $ uvicorn app.main:app --reload
 ```
 
+![](./img/run_example.png)
+
 - To test APIs, go to `127.0.0.1:8000`, which redirects to `127.0.0.1:8000/docs`.
 - To manage admin dashboard, go to `127.0.0.1:8000/admin`.
