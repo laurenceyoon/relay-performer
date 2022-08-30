@@ -3,7 +3,7 @@ import mido
 
 
 def get_audio_path_from_midi_path(midi_path):
-    audio_dir = Path("./resources/audio/target/")
+    audio_dir = Path("./resources/audio/")
     audio_path = audio_dir / f"{Path(midi_path).stem}.wav"
     return audio_path
 
