@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 
 class ScheduleBase(BaseModel):
@@ -50,8 +50,8 @@ class PieceCreate(PieceBase):
 
 class Piece(PieceBase):
     id: int
-    subpieces: List[SubPiece] = []
-    schedules: List[Schedule] = []
+    subpieces: list[SubPiece] = []
+    schedules: list[Schedule] = []
 
     class Config:
         orm_mode = True
