@@ -1,11 +1,11 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
-from typing import List
 
 from .. import crud, schemas
+from ..core.helpers import play_piece_to_outport
 from ..database import get_db
-from ..core.helpers import play_piece_to_outport, start_interactive_performance
 
 router = APIRouter(
     prefix="/subpieces",
@@ -25,14 +25,13 @@ def play_subpiece(
     background_tasks.add_task(play_piece_to_outport, piece=db_subpiece)
     return {"response": f"playing title({db_subpiece}) on the background"}
 
-@router.get("/", response_model=List[schemas.SubPiece])
+@router.get("/", response_model=list[schemas.SubPiece])
 def read_subpieces(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_subpieces(db, skip=skip, limit=limit)
 
 
 @router.get(
-    "/subpieces/{subpiece_id}", response_model=schemas.SubPiece
+    "/{subpiece_id}", response_model=schemas.SubPiece
 )
 def read_subpiece(subpiece_id: int, db: Session = Depends(get_db)):
     return crud.get_subpiece(db, subpiece_id=subpiece_id)
-

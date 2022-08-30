@@ -29,6 +29,10 @@ def get_schedules_by_piece(db: Session, piece_id: int):
     return db.query(models.Schedule).filter(models.Schedule.piece_id == piece_id).all()
 
 
+def get_subpieces_by_piece(db: Session, piece_id: int):
+    return db.query(models.SubPiece).filter(models.SubPiece.piece_id == piece_id).all()
+
+
 def get_schedule(db: Session, schedule_id: int):
     return db.query(models.Schedule).filter(models.Schedule.id == schedule_id).first()
 

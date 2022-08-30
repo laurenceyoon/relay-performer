@@ -11,12 +11,8 @@ router = APIRouter(
 )
 
 
-@router.get("/schedules/", response_model=list[schemas.Schedule])
-def read_schedules(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_schedules_by_piece(db, skip=skip, limit=limit)
-
 @router.get(
-    "/schedules/{schedule_id}", response_model=schemas.Schedule
+    "/{schedule_id}", response_model=schemas.Schedule
 )
 def read_schedule(schedule_id: int, db: Session = Depends(get_db)):
     return crud.get_schedule(db, schedule_id=schedule_id)

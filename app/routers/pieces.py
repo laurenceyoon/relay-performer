@@ -1,11 +1,11 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends, BackgroundTasks
+
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
-from typing import List
 
 from .. import crud, schemas
-from ..database import get_db
 from ..core.helpers import play_piece_to_outport, start_interactive_performance
+from ..database import get_db
 
 router = APIRouter(
     prefix="/pieces",
@@ -49,11 +49,22 @@ def create_subpiece_by_piece(
 ):
     return crud.create_subpiece(db=db, subpiece=subpiece, piece_id=piece_id)
 
+
 @router.post("/pieces", response_model=schemas.Piece, tags=["pieces"])
 def create_piece(piece: schemas.PieceCreate, db: Session = Depends(get_db)):
     return crud.create_piece(db=db, piece=piece)
 
 
-@router.get("/pieces/", response_model=List[schemas.Piece], tags=["pieces"])
+@router.get("/{piece_id}/schedules/", response_model=list[schemas.Schedule], tags=["pieces"])
+def read_schedules_by_piece(piece_id, db: Session = Depends(get_db)):
+    return crud.get_schedules_by_piece(db, piece_id)
+
+
+@router.get("/{piece_id}/subpieces/", response_model=list[schemas.SubPiece], tags=["pieces"])
+def read_subpieces_by_piece(piece_id, db: Session = Depends(get_db)):
+    return crud.get_subpieces_by_piece(db, piece_id)
+
+
+@router.get("/", response_model=list[schemas.Piece], tags=["pieces"])
 def read_pieces(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_pieces(db, skip=skip, limit=limit)
