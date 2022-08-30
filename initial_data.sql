@@ -11,7 +11,6 @@ CREATE TABLE pieces (
 	path VARCHAR, 
 	PRIMARY KEY (id)
 );
-INSERT INTO pieces VALUES(1,'Haydn_Sonata_Hob._XVI37_Mov._1_D_Major','./resources/midi/full/Haydn_Sonata_Hob._XVI37_Mov._1_D_Major.mid');
 INSERT INTO pieces VALUES(2,'cmaj','./resources/midi/full/cmaj.mid');
 INSERT INTO pieces VALUES(3,'Happy_Birthday_To_You_C_Major','./resources/midi/full/Happy_Birthday_To_You_C_Major.mid');
 INSERT INTO pieces VALUES(4,'Haydn_Hob._XVI34_1._Presto','./resources/midi/full/Haydn_Hob._XVI34_1._Presto.mid');
@@ -26,7 +25,6 @@ CREATE TABLE subpieces (
 	PRIMARY KEY (id), 
 	FOREIGN KEY(piece_id) REFERENCES pieces (id)
 );
-INSERT INTO subpieces VALUES(1,'Happy_Birthday_To_You_C_Major-Part2','./resources/midi/subpieces/Happy_Birthday_To_You_C_Major-Part2.mid',3,0.0);
 INSERT INTO subpieces VALUES(2,'Haydn_Hob.XVI34_1-1','./resources/midi/subpieces/Haydn_Hob.XVI34_1-1.mid',4,1.4599999999999999644);
 INSERT INTO subpieces VALUES(3,'Haydn_Hob.XVI34_1-2','./resources/midi/subpieces/Haydn_Hob.XVI34_1-2.mid',4,0.0);
 INSERT INTO subpieces VALUES(4,'Haydn_Hob.XVI34_1-3','./resources/midi/subpieces/Haydn_Hob.XVI34_1-3.mid',4,1.8);
