@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from .. import crud, schemas
 from ..core.helpers import play_piece_to_outport, start_interactive_performance
 from ..database import get_db
+from ..redis import redis_client
 
 router = APIRouter(
     prefix="/pieces",
@@ -16,19 +17,21 @@ router = APIRouter(
     "/{piece_id}/play", status_code=HTTPStatus.ACCEPTED, tags=["Interactive API"]
 )
 def play_piece(
-    piece_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+    piece_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db), speed: float = 1
 ):
+    redis_client.set("speed", speed)
+    print(f"~~~~~~~~~~~~~~~~~~~redis set speed to {speed}~~~~~~~~~~~~~~~~~~~")
     db_piece = crud.get_piece_by_id(db, piece_id=piece_id)
     background_tasks.add_task(play_piece_to_outport, piece=db_piece)
     return {"response": f"playing title({db_piece.title}) on the background"}
 
 
 @router.patch(
-    "/{piece_id}/perform",
+    "/{piece_id}/relay-perform",
     status_code=HTTPStatus.ACCEPTED,
     tags=["Interactive API"],
 )
-def perform_piece(
+def relay_perform_piece(
     piece_id: int,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),

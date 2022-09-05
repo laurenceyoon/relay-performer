@@ -8,10 +8,11 @@ from functools import partial
 import scipy
 from tqdm import tqdm
 
-from ..config import HOP_LENGTH, Direction, N_FFT, SAMPLE_RATE, FRAME_RATE
+from ..config import HOP_LENGTH, Direction, N_FFT, FRAME_RATE
+from ..redis import redis_client
 from .stream_processor import StreamProcessor
 
-matplotlib.use("agg")
+# matplotlib.use("agg")
 MAX_LEN = int(1e4)
 
 
@@ -73,7 +74,6 @@ class OnlineTimeWarping:
         )
 
     def init_dist_matrix(self):
-        print("init")
         ref_stft_seg = self.ref_stft[:, : self.ref_pointer]  # [F, M]
         query_stft_seg = self.query_stft[:, : self.query_pointer]  # [F, N]
         dist = scipy.spatial.distance.cdist(ref_stft_seg.T, query_stft_seg.T)
@@ -324,7 +324,8 @@ class OnlineTimeWarping:
             pbar.update(
                 self.candi_history[-1][0] - last_ref_checkpoint + self.frame_per_seg
             )
-            self.sp.stop()
+            self.stop()
+            redis_client.get("speed", self.ref_total_length / self.query_pointer)
 
     def stop(self):
         self.is_running = False

@@ -9,6 +9,7 @@ from . import models
 from .core.helpers import (all_stop_playing, close_stream, get_current_state,
                            set_playback_speed)
 from .database import engine
+from .redis import redis_client
 from .internal.admin import PieceAdmin, ScheduleAdmin, SubPieceAdmin
 from .routers import pieces, schedules, subpieces
 
@@ -51,6 +52,7 @@ def root():
     return RedirectResponse("/docs")
 
 
+# Test APIs
 @app.get("/test", tags=["Test"])
 def test():
     print("test API for synchronous request")
@@ -62,3 +64,10 @@ async def async_test():
     print("test API for asynchronous request - sleep for 0.1 sec...")
     await asyncio.sleep(0.1)
     return {"async hello": "world"}
+
+
+@app.get("/redis-test", tags=["Test"])
+def redis_test(value: float = 1):
+    redis_client.set("key", value)
+    value = redis_client.get("key")
+    return {"key": value}

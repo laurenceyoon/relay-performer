@@ -2,13 +2,15 @@ import mido
 import time
 
 from mido import MidiFile
+from ..redis import redis_client
+
+DEFAULT_SPEED = 1
 
 
 class MidiPort:
     def __init__(self):
         self.outport = None
         self.is_running = False
-        self.speed = 1
         try:
             outport = mido.open_output()
         except OSError:
@@ -17,7 +19,6 @@ class MidiPort:
             self.outport = outport
 
     def send(self, midi: MidiFile):
-        self.speed = 1
         if self.outport is None:
             self.outport = mido.open_output()
         self.is_running = True
@@ -27,7 +28,8 @@ class MidiPort:
         for msg in midi:
             if self.is_running:
                 if not msg.is_meta:
-                    time.sleep(msg.time * 1/self.speed)
+                    speed = float(redis_client.get("speed")) or DEFAULT_SPEED
+                    time.sleep(msg.time * 1 / speed)
                     self.outport.send(msg)
             else:
                 print("Stop sending MIDI messages!")

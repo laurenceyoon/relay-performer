@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from .. import crud, schemas
 from ..core.helpers import play_piece_to_outport
 from ..database import get_db
+from ..redis import redis_client
 
 router = APIRouter(
     prefix="/subpieces",
@@ -19,8 +20,9 @@ router = APIRouter(
     tags=["Interactive API"],
 )
 def play_subpiece(
-    subpiece_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+    subpiece_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db), speed: float = 1
 ):
+    redis_client.set("speed", speed)
     db_subpiece = crud.get_subpiece(db, subpiece_id)
     background_tasks.add_task(play_piece_to_outport, piece=db_subpiece)
     return {"response": f"playing title({db_subpiece}) on the background"}
