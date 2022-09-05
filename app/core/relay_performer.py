@@ -14,7 +14,7 @@ from ..config import HOP_LENGTH, FRAME_RATE, HUMAN_PLAYER
 from ..redis import redis_client
 
 
-class InteractivePerformer:
+class RelayPerformer:
     states = ["asleep", "following", "playing"]
 
     def __init__(self, piece: Piece, start_from=1):
@@ -30,7 +30,7 @@ class InteractivePerformer:
         self.current_subpiece: SubPiece = self.current_schedule.subpiece
 
         self.machine = Machine(
-            model=self, states=InteractivePerformer.states, initial="asleep"
+            model=self, states=RelayPerformer.states, initial="asleep"
         )
         self.machine.add_transition(
             trigger="start_performance",
@@ -119,10 +119,10 @@ class InteractivePerformer:
 
     def start_playing(self):
         print(
-            f"""\n🎹 switch player to VirtuosoNet 🤖 🎹
-            \nPlayback Speed: {float(redis_client.get("speed"))}
-            \nremaining schedules count: {len(self.schedules)}
-            """
+            f"""
+\n🎹 switch player to VirtuosoNet 🤖 🎹
+Playback Speed: {float(redis_client.get("speed"))}
+remaining schedules count: {len(self.schedules)}"""
         )
         self.force_quit_flag = False
         print(f"start_playing!, current subpiece: {self.current_subpiece}")

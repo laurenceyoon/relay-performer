@@ -325,7 +325,7 @@ class OnlineTimeWarping:
                 self.candi_history[-1][0] - last_ref_checkpoint + self.frame_per_seg
             )
             self.stop()
-            redis_client.get("speed", self.ref_total_length / self.query_pointer)
+            redis_client.set("speed", self.ref_total_length / self.query_pointer)
 
     def stop(self):
         self.is_running = False

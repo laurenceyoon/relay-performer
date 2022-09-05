@@ -6,10 +6,10 @@ import numpy as np
 from ..models import Piece, Schedule
 from .midiport import midi_port
 from .stream_processor import sp
-from .interactive_performer import InteractivePerformer
+from .relay_performer import RelayPerformer
 from .utils import get_midi_from_piece
 
-interactive_performer = None
+relay_performer = None
 
 
 def play_piece_to_outport(piece: Piece):
@@ -27,8 +27,8 @@ def set_playback_speed(speed: float):
 def all_stop_playing():
     print("############ all stop playing ############")
     midi_port.panic()
-    if interactive_performer is not None:
-        interactive_performer.stop_performance()
+    if relay_performer is not None:
+        relay_performer.stop_performance()
 
 
 def open_stream():
@@ -50,23 +50,19 @@ async def waiter(schedule: Schedule, event: asyncio.Event):
     play_piece_to_outport(schedule.subpiece)
 
 
-def load_piece_for_interactive_performance(piece: Piece, start_from=1):
-    global interactive_performer
-    interactive_performer = InteractivePerformer(piece=piece, start_from=start_from)
+def load_piece_for_relay_performance(piece: Piece, start_from=1):
+    global relay_performer
+    relay_performer = RelayPerformer(piece=piece, start_from=start_from)
 
 
-def start_interactive_performance(piece: Piece, start_from=1):
-    load_piece_for_interactive_performance(piece, start_from)
+def start_relay_performance(piece: Piece, start_from=1):
+    load_piece_for_relay_performance(piece, start_from)
     print(f"\n🎹 Let's play! {piece.title} 🎹")
-    interactive_performer.start_performance()
+    relay_performer.start_performance()
 
 
 def get_current_state():
-    return (
-        interactive_performer.state
-        if interactive_performer is not None
-        else "Not Initialized"
-    )
+    return relay_performer.state if relay_performer is not None else "Not Initialized"
 
 
 def plot_path(odtw, query_cqt, query_cqt_mag, ref_cqt, ref_cqt_mag, path):
