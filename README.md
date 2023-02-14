@@ -6,6 +6,13 @@ The online time warping (OLTW) algorithm is implemented in this system, based on
 
 Tested on Python 3.10 (conda)
 
+## Preparing packages
+
+```bash
+$ brew install redis
+$ brew services start redis
+```
+
 ## Setting a new conda environment
 
 ```bash
@@ -13,7 +20,12 @@ $ conda env create -f environment.yml
 $ conda activate rpf
 ```
 
-if there's issue about `portaudio` installation on Mac M1, please refer to [here](https://stackoverflow.com/a/68822818)
+- If there's an issue about `portaudio` installation on Mac M1, please refer to [here](https://stackoverflow.com/a/68822818)
+- If there's an issue about `soundfile`, please reinstall soundfile as follows:
+
+    ```bash
+    $ pip install --upgrade --force-reinstall soundfile
+    ```
 
 ## Rebuild DB & Start App
 
