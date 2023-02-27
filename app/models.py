@@ -52,4 +52,4 @@ class Schedule(Base):
     subpiece = relationship("SubPiece", back_populates="schedules")
 
     def __str__(self) -> str:
-        return f"{self.player}, {self.subpiece.title}, {self.start_measure}-{self.end_measure}"
+        return f"Subpiece({self.subpiece_id}): {self.player}, {self.start_measure}-{self.end_measure}"
