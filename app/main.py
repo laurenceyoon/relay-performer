@@ -6,11 +6,15 @@ from fastapi.responses import RedirectResponse
 from sqladmin import Admin
 
 from . import models
-from .core.helpers import (all_stop_playing, close_stream, get_current_state,
-                           set_playback_speed)
+from .core.helpers import (
+    all_stop_playing,
+    close_stream,
+    get_current_state,
+    set_playback_speed,
+)
 from .database import engine
 from .redis import redis_client
-from .internal.admin import PieceAdmin, ScheduleAdmin, SubPieceAdmin
+from .internal.admin import PieceAdmin, ScheduleAdmin, SubPieceAdmin, DocsView
 from .routers import pieces, schedules, subpieces
 
 models.Base.metadata.create_all(bind=engine)
@@ -24,9 +28,9 @@ app.include_router(schedules.router)
 
 # Admin
 admin = Admin(app, engine, title="Relay Performer", debug=True)
-admin.add_view(PieceAdmin)
-admin.add_view(SubPieceAdmin)
-admin.add_view(ScheduleAdmin)
+admin_views = [DocsView, PieceAdmin, SubPieceAdmin, ScheduleAdmin]
+for view in admin_views:
+    admin.add_view(view)
 
 
 @app.patch("/stop", tags=["Interactive API"])
@@ -49,7 +53,7 @@ def current_state():
 
 @app.get("/", tags=["Basic API"])
 def root():
-    return RedirectResponse("/docs")
+    return RedirectResponse("/admin")
 
 
 # Test APIs
