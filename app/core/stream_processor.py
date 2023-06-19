@@ -4,13 +4,22 @@ import pyaudio
 import queue
 from typing import Optional
 import time
+import threading
+import soundfile as sf
 
-from ..config import CHUNK_SIZE, HOP_LENGTH, SAMPLE_RATE, CHANNELS, N_FFT
+from ..config import CHUNK_SIZE, HOP_LENGTH, SAMPLE_RATE, CHANNELS, N_FFT, FEATURES
+from .utils import process_chroma, process_phonemes
 
 
 class StreamProcessor:
     def __init__(
-        self, sample_rate, chunk_size, hop_length, n_fft, verbose=False, query_norm=None
+        self,
+        sample_rate,
+        chunk_size,
+        hop_length,
+        n_fft,
+        verbose=False,
+        features=FEATURES,
     ):
         self.chunk_size = chunk_size
         self.channels = CHANNELS
@@ -18,40 +27,45 @@ class StreamProcessor:
         self.hop_length = hop_length
         self.n_fft = n_fft
         self.verbose = verbose
-        self.query_norm = query_norm
+        self.features = features
         self.format = pyaudio.paFloat32
         self.audio_interface: Optional[pyaudio.PyAudio] = None
         self.audio_stream: Optional[pyaudio.Stream] = None
+        self.feature_buffer = queue.Queue()
         self.buffer = queue.Queue()
-        self.chroma_buffer = queue.Queue()
         self.last_chunk = None
-        self.is_mic_open = False
         self.index = 0
+        self.mock = False
 
-    def _process_chroma(self, y, time_info=None):
-        y = np.concatenate((self.last_chunk, y)) if self.last_chunk is not None else y
-        query_chroma_stft = (
-            librosa.feature.chroma_stft(  # TODO: center = False 옵션 줘서 해보기
-                y=y,
-                sr=self.sample_rate,
-                hop_length=self.hop_length,
-                n_fft=self.n_fft,
-                norm=self.query_norm,
-            )
-        )
-        # 첫번째 chunk 는 맨 앞의 padding된 stft frame을 버리지 않음
-        query_chroma_stft = (
-            query_chroma_stft[:, 1:-1]
-            if self.last_chunk is not None
-            else query_chroma_stft[:, :-1]
-        )
-        query_chroma_stft = np.log(query_chroma_stft * 5 + 1) / 16
+    def _process_feature(self, y, time_info=None):
+        if self.last_chunk is None:  # add zero padding at the first block
+            y = np.concatenate((np.zeros(self.hop_length), y))
+        else:
+            # add last chunk at the beginning of the block
+            # making 5 block, 1 block overlap -> 4 frames each time
+            y = np.concatenate((self.last_chunk, y))
+
+        y_feature = None
+        for feature in self.features:
+            if feature == "chroma":
+                y_chroma = process_chroma(y)
+                y_feature = (
+                    y_chroma if y_feature is None else np.vstack((y_feature, y_chroma))
+                )
+            elif feature == "phoneme":
+                y_phoneme = process_phonemes(y)
+                y_feature = (
+                    y_phoneme
+                    if y_feature is None
+                    else np.vstack((y_feature, y_phoneme))
+                )
+
         current_chunk = {
             "timestamp": time_info if time_info else time.time(),
-            "chroma_stft": query_chroma_stft,
+            "feature": y_feature,
         }
-        self.chroma_buffer.put(current_chunk)
-        self.last_chunk = y[y.shape[0] - self.hop_length :]
+        self.feature_buffer.put(current_chunk)
+        self.last_chunk = y[-self.hop_length :]
         self.index += 1
 
     def _process_frame(self, data, frame_count, time_info, status_flag):
@@ -62,57 +76,77 @@ class StreamProcessor:
         self.buffer.put(data)
 
         query_audio = np.frombuffer(data, dtype=np.float32)  # initial y
-        self._process_chroma(query_audio, time_info["input_buffer_adc_time"])
+        self._process_feature(query_audio, time_info["input_buffer_adc_time"])
 
         return (data, pyaudio.paContinue)
 
-    def mock_stream(self, mock_file=None):
-        filename = (
-            mock_file
-            or "../resources/audio/target/presto_musescore/Haydn_Hob._XVI34_1._Presto.wav"
-        )
-        stream = librosa.stream(
-            filename,
-            block_length=int(self.chunk_size / self.hop_length),
-            frame_length=self.chunk_size,
-            hop_length=self.hop_length,
-        )
-        for y_block in stream:
-            print(f"y_block.shape: {y_block.shape}")
-            self._process_chroma(y_block)
+    def mock_stream(self, file_path):
+        duration = int(librosa.get_duration(filename=file_path))
+        # time_interval = self.chunk_size / self.sample_rate  # 0.2 sec
+        # time.sleep(time_interval)  # 실제 시간과 동일하게 simulation
 
-    def run(self, mock=False, mock_file=None):
-        if mock:
-            print(f"* [Mocking] Loading existing audio file({mock_file})....")
-            self.mock_stream(mock_file)
-            print("* [Mocking] Done.")
-        else:
-            self.audio_interface = pyaudio.PyAudio()
-            self.audio_stream = self.audio_interface.open(
-                format=self.format,
-                channels=self.channels,
-                rate=self.sample_rate,
-                input=True,
-                frames_per_buffer=self.chunk_size,
-                stream_callback=self._process_frame,
+        audio_y, _ = librosa.load(file_path, sr=self.sample_rate)
+        padded_audio = np.concatenate(
+            (audio_y, np.zeros(duration * 2 * self.sample_rate))
+        )
+        trimmed_audio = padded_audio[
+            : len(padded_audio) - (len(padded_audio) % self.chunk_size)
+        ]
+        while trimmed_audio.any():
+            audio_chunk = trimmed_audio[: self.chunk_size]
+            time_info = {"input_buffer_adc_time": time.time()}
+            self._process_feature(audio_chunk, time_info)
+            trimmed_audio = trimmed_audio[self.chunk_size :]
+            self.index += 1
+
+        # fill empty values with zeros after stream is finished
+        additional_padding_size = duration * 2 * self.sample_rate
+        while additional_padding_size > 0:
+            time_info = {"input_buffer_adc_time": time.time()}
+            self._process_feature(
+                np.zeros(self.chunk_size),
+                time_info,
             )
-            self.is_mic_open = True
-            self.audio_stream.start_stream()
-            self.start_time = self.audio_stream.get_time()
-            if self.verbose:
-                print("* Recording in progress....")
+            additional_padding_size -= self.chunk_size
+
+    def run(self, mock=False, mock_file=""):
+        if mock:  # mock processing
+            print(f"* [Mocking] Loading existing audio file({mock_file})....")
+            self.mock = True
+            x = threading.Thread(target=self.mock_stream, args=(mock_file,))
+            x.start()
+            return
+
+        # real-time processing
+        self.audio_interface = pyaudio.PyAudio()
+        self.audio_stream = self.audio_interface.open(
+            format=self.format,
+            channels=self.channels,
+            rate=self.sample_rate,
+            input=True,
+            frames_per_buffer=self.chunk_size,
+            stream_callback=self._process_frame,
+        )
+        self.audio_stream.start_stream()
+        self.start_time = self.audio_stream.get_time()
+        if self.verbose:
+            print("* Recording in progress....")
 
     def stop(self):
-        if self.is_mic_open:
+        if not self.mock and self.audio_stream:
             self.audio_stream.stop_stream()
             self.audio_stream.close()
-            self.is_mic_open = False
+            self.mock = False
             self.audio_interface.terminate()
             if self.verbose:
                 print("Recording Stopped.")
 
-    def is_open(self):
-        return self.is_mic_open
+    def save_wav(self, file_path):
+        y = None
+        while not self.feature_buffer.empty():
+            data = self.feature_buffer.get()
+            y = data if y is None else np.concatenate((y, data))
+        sf.write(file_path, y, self.sample_rate, subtype="PCM_24")
 
 
 sp = StreamProcessor(
@@ -120,5 +154,4 @@ sp = StreamProcessor(
     chunk_size=CHUNK_SIZE,
     hop_length=HOP_LENGTH,
     n_fft=N_FFT,
-    query_norm=None,
 )

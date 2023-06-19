@@ -1,17 +1,24 @@
 import time
-
 from collections import deque
+
 import librosa
 from transitions import Machine
 
+from ..config import (
+    DTW_WINDOW_SIZE,
+    FEATURES,
+    HOP_LENGTH,
+    HUMAN_PLAYER,
+    METRIC,
+    SAMPLE_RATE,
+)
 from ..models import Piece, SubPiece
-from .dto import Schedule
-from .utils import get_audio_path_from_midi_path, get_midi_from_piece
-from .online_dtw import OnlineTimeWarping
-from .midiport import midi_port
-from .stream_processor import sp
-from ..config import HOP_LENGTH, FRAME_RATE, HUMAN_PLAYER
 from ..redis import redis_client
+from .dto import Schedule
+from .midiport import midi_port
+from .online_dtw import OLTW
+from .stream_processor import sp
+from .utils import get_audio_path_from_midi_path, get_midi_from_piece
 
 
 class RelayPerformer:
@@ -100,14 +107,15 @@ class RelayPerformer:
         )
 
         # replace alignment
-        self.odtw = OnlineTimeWarping(
+        self.odtw = OLTW(
             sp,
             ref_audio_path=current_subpiece_audio_path.as_posix(),
-            window_size=FRAME_RATE * 3,  # window size: 3 sec
+            window_size=DTW_WINDOW_SIZE,  # window size: 3 sec
+            sample_rate=SAMPLE_RATE,
             hop_length=HOP_LENGTH,
-            verbose=False,
             max_run_count=3,
-            ref_norm=None,
+            metric=METRIC,
+            features=FEATURES,
         )
         start_time = time.time()
         self.odtw.run()

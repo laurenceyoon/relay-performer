@@ -25,4 +25,9 @@ class SubPieceAdmin(ModelView, model=SubPiece):
 
 class ScheduleAdmin(ModelView, model=Schedule):
     icon = "fa-solid fa-align-justify"
-    column_list = [Schedule.id, Schedule.subpiece_id, Schedule.player]
+    column_list = [
+        Schedule.id,
+        Schedule.piece_id,
+        Schedule.subpiece_id,
+        Schedule.player,
+    ]
