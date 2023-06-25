@@ -7,7 +7,7 @@ from functools import partial
 import scipy
 from tqdm import tqdm
 
-from ..config import HOP_LENGTH, N_FFT, FRAME_RATE, FEATURES
+from ..config import HOP_LENGTH, N_FFT, FRAME_RATE, METRIC, FEATURES
 from ..redis import redis_client
 from .stream_processor import StreamProcessor
 from .utils import process_chroma, process_phonemes, crnn_model
@@ -30,7 +30,7 @@ class OLTW:
         sample_rate,
         hop_length,
         max_run_count=30,
-        metric="euclidean",
+        metric=METRIC,
         features=FEATURES,
     ):
         self.sp = sp
@@ -39,6 +39,7 @@ class OLTW:
         self.sample_rate = sample_rate
         self.hop_length = hop_length
         self.max_run_count = max_run_count
+        self.metric = metric
         self.features = features
         self.frame_per_seg = int(sp.chunk_size / hop_length)
         self.ref_pointer = 0
@@ -99,7 +100,9 @@ class OLTW:
     def init_dist_matrix(self):
         ref_stft_seg = self.ref_features[:, : self.ref_pointer]  # [F, M]
         target_stft_seg = self.target_features[:, : self.target_pointer]  # [F, N]
-        dist = scipy.spatial.distance.cdist(ref_stft_seg.T, target_stft_seg.T)
+        dist = scipy.spatial.distance.cdist(
+            ref_stft_seg.T, target_stft_seg.T, metric=self.metric
+        )
         self.dist_matrix[self.w - dist.shape[0] :, self.w - dist.shape[1] :] = dist
 
     def init_matrix(self):
@@ -112,7 +115,7 @@ class OLTW:
         new_len_acc = np.zeros((wx, wy))
         x_seg = self.ref_features[:, x - wx : x].T  # [wx, N]
         y_seg = self.target_features[:, y - d : y].T  # [d, N]
-        dist = scipy.spatial.distance.cdist(x_seg, y_seg)  # [wx, d]
+        dist = scipy.spatial.distance.cdist(x_seg, y_seg, metric=self.metric)  # [wx, d]
 
         for i in range(wx):
             for j in range(d):
@@ -162,7 +165,9 @@ class OLTW:
             new_len_acc[:-d, :] = self.acc_len_matrix[d:]
             x_seg = self.ref_features[:, x - d : x].T  # [d, N]
             y_seg = self.target_features[:, y - wy : y].T  # [wy, N]
-            dist = scipy.spatial.distance.cdist(x_seg, y_seg)  # [d, wy]
+            dist = scipy.spatial.distance.cdist(
+                x_seg, y_seg, metric=self.metric
+            )  # [d, wy]
 
             for i in range(d):
                 for j in range(wy):
@@ -201,7 +206,9 @@ class OLTW:
             new_len_acc[:, :-d] = self.acc_len_matrix[:, -overlap_y:]
             x_seg = self.ref_features[:, x - wx : x].T  # [wx, 12]
             y_seg = self.target_features[:, y - d : y].T  # [d, 12]
-            dist = scipy.spatial.distance.cdist(x_seg, y_seg)  # [wx, d``]
+            dist = scipy.spatial.distance.cdist(
+                x_seg, y_seg, metric=self.metric
+            )  # [wx, d``]
 
             for i in range(wx):
                 for j in range(d):
@@ -324,11 +331,11 @@ class OLTW:
             self.previous_direction = direction
             self.iteration += 1
 
-            if duration is None:
-                duration = int(librosa.get_duration(filename=self.ref_audio_file)) + 1
-            if h and hfig and fig:
-                h.set_data(self.target_features[:, : FRAME_RATE * duration])
-                hfig.update(fig)
+            # if duration is None:
+            #     duration = int(librosa.get_duration(filename=self.ref_audio_file)) + 1
+            # if h and hfig and fig:
+            #     h.set_data(self.target_features[:, : FRAME_RATE * duration])
+            #     hfig.update(fig)
 
         if self.is_running:
             pbar.set_description(

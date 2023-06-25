@@ -14,6 +14,9 @@ FEATURES = ["chroma", "phoneme"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
 
+# config for midi port
+MIDI_PORT_NAME = None  # "USB MIDI" or None
+
 # config for CRNN classifier model
 CRNN_MODEL_PATH = Path("./app/model/uni-5cls-640hop.pt")
 N_MELS = 66
@@ -21,3 +24,8 @@ N_MELS = 66
 SOUND_FONT_PATH = "~/Library/Audio/Sounds/Banks/GeneralUser\ GS\ v1.471.sf2"
 AI_PLAYER = "VirtuosoNet"
 HUMAN_PLAYER = "Pianist"
+
+# config for OSC connection
+OSC_CLIENT_IP = "192.168.50.161"
+OSC_CLIENT_PORT = 53000
+ENABLE_OSC = True
