@@ -15,12 +15,27 @@ $ brew services start redis
 
 ## Setting a new conda environment
 
+If you're using Mac M1, please run the following command before creating a new conda environment.
+
+```bash
+$ brew install portaudio
+$ brew --prefix portaudio # copy the path
+$ vim $HOME/.pydistutils.cfg
+
+# Then, add the following lines to the file.
+
+[build_ext]
+include_dirs=/--PATH--/include/
+library_dirs=/--PATH--/lib/
+```
+
+Create a new conda environment and activate it.
+
 ```bash
 $ conda env create -f environment.yml
 $ conda activate rpf
 ```
 
-- If there's an issue about `portaudio` installation on Mac M1, please refer to [here](https://stackoverflow.com/a/68822818)
 - If there's an issue about `soundfile`, please reinstall soundfile as follows:
 
     ```bash
