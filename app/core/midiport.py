@@ -26,21 +26,22 @@ class MidiPort:
 
         # start playing
         # adaptive tempo
-        # for msg in midi:
-        #     if self.is_running:
-        #         if not msg.is_meta:
-        #             speed = float(redis_client.get("speed")) or DEFAULT_SPEED
-        #             time.sleep(msg.time * 1 / speed)
-        #             self.outport.send(msg)
-        #     else:
-        #         print("Stop sending MIDI messages!")
-        #         return
-        for msg in midi.play():
+        for msg in midi:
             if self.is_running:
-                self.outport.send(msg)
+                if not msg.is_meta:
+                    speed = float(redis_client.get("speed")) or DEFAULT_SPEED
+                    time.sleep(msg.time * 1 / speed)
+                    self.outport.send(msg)
             else:
                 print("Stop sending MIDI messages!")
                 return
+
+        # for msg in midi.play():
+        #     if self.is_running:
+        #         self.outport.send(msg)
+        #     else:
+        #         print("Stop sending MIDI messages!")
+        #         return
         # end of playing
         self.is_running = False
 
