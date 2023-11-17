@@ -13,7 +13,9 @@ class MidiPort:
         self.outport = None
         self.is_running = False
         try:
+            print(mido.get_input_names())
             outport = mido.open_output(MIDI_PORT_NAME)
+            print(f"Connected to MIDI port: {outport}")
         except OSError:
             pass
         else:

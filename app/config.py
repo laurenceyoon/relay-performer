@@ -15,7 +15,7 @@ METRIC = "cosine"
 NORM = np.inf
 
 # config for midi port
-MIDI_PORT_NAME = None  # "USB MIDI" or None
+MIDI_PORT_NAME = "Scarlett 8i6 USB"  # "USB MIDI" or None
 
 # config for CRNN classifier model
 CRNN_MODEL_PATH = Path("./app/model/uni-5cls-640hop.pt")
