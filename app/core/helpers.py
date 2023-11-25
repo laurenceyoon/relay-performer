@@ -1,15 +1,15 @@
 import asyncio
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
 import numpy as np
 
+from ..config import ENABLE_OSC
 from ..models import Piece, Schedule
 from .midi_controller import midi_port
-from .stream_processor import sp
-from .relay_performer import RelayPerformer
-from .utils import get_midi_from_piece
 from .osc_connector import osc_client
-from ..config import ENABLE_OSC
+from .relay_performer import RelayPerformer
+from .stream_processor import sp
+from .utils import get_midi_from_piece
 
 relay_performer = None
 

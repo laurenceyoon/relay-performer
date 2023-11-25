@@ -1,16 +1,16 @@
-from enum import IntEnum
 import time
+from enum import IntEnum
+
 import librosa
 import librosa.display
 import numpy as np
-from functools import partial
 import scipy
 from tqdm import tqdm
 
-from ..config import HOP_LENGTH, N_FFT, FRAME_RATE, METRIC, FEATURES
+from ..config import FEATURES, METRIC
 from ..redis import redis_client
 from .stream_processor import StreamProcessor
-from .utils import process_chroma, process_phonemes, crnn_model
+from .utils import crnn_model, process_chroma, process_phonemes
 
 MAX_LEN = int(1e4)
 

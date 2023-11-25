@@ -1,7 +1,6 @@
 import time
 from collections import deque
 
-import librosa
 from transitions import Machine
 
 from ..config import (
@@ -11,16 +10,15 @@ from ..config import (
     HUMAN_PLAYER,
     METRIC,
     SAMPLE_RATE,
-    ENABLE_OSC,
 )
 from ..models import Piece, SubPiece
 from ..redis import redis_client
 from .dto import Schedule
 from .midi_controller import midi_port
 from .online_dtw import OLTW
+from .osc_connector import osc_client
 from .stream_processor import sp
 from .utils import get_audio_path_from_midi_path, get_midi_from_piece
-from .osc_connector import osc_client
 
 
 class RelayPerformer:

@@ -1,10 +1,11 @@
-import mido
-import time
 import threading
+import time
 
+import mido
 from mido import MidiFile
+
+from ..config import CONNECTION_INTERVAL, MIDI_PORT_NAME
 from ..redis import redis_client
-from ..config import MIDI_PORT_NAME, CONNECTION_INTERVAL
 
 DEFAULT_SPEED = 1
 
