@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..models import Piece, Schedule
-from .midiport import midi_port
+from .midi_controller import midi_port
 from .stream_processor import sp
 from .relay_performer import RelayPerformer
 from .utils import get_midi_from_piece
@@ -20,7 +20,7 @@ def play_piece_to_outport(piece: Piece):
     # if ENABLE_OSC and (piece.id == 7 or piece.id == 56):  # Ave Maria
     #     print("osc_start")
     #     osc_client.send_message("/cue/1/start")
-    midi_port.send(midi)
+    midi_port.play(midi)
     print(f"* Playing piece({piece.title}) Ended.")
 
 

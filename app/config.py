@@ -14,8 +14,9 @@ FEATURES = ["chroma", "phoneme"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
 
-# config for midi port
+# config for MIDI Port
 MIDI_PORT_NAME = "Scarlett 8i6 USB"  # "USB MIDI" or None
+CONNECTION_INTERVAL = 5
 
 # config for CRNN classifier model
 CRNN_MODEL_PATH = Path("./app/model/uni-5cls-640hop.pt")

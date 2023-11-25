@@ -16,7 +16,7 @@ from ..config import (
 from ..models import Piece, SubPiece
 from ..redis import redis_client
 from .dto import Schedule
-from .midiport import midi_port
+from .midi_controller import midi_port
 from .online_dtw import OLTW
 from .stream_processor import sp
 from .utils import get_audio_path_from_midi_path, get_midi_from_piece
@@ -142,7 +142,7 @@ remaining schedules count: {len(self.schedules)}"""
         #     print("osc_start")
         #     osc_client.send_message("/cue/AIP/start")
         start_time = time.time()
-        midi_port.send(midi)
+        midi_port.play(midi)
         print(f"play {self.current_subpiece} end")
         midi_port.panic()
 
