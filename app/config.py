@@ -26,6 +26,6 @@ AI_PLAYER = "VirtuosoNet"
 HUMAN_PLAYER = "Pianist"
 
 # config for OSC connection
-OSC_CLIENT_IP = "192.168.50.161"
+OSC_CLIENT_IP = "192.168.50.201"
 OSC_CLIENT_PORT = 53000
-ENABLE_OSC = True
+ENABLE_OSC = False

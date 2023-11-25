@@ -16,9 +16,10 @@ relay_performer = None
 
 def play_piece_to_outport(piece: Piece):
     midi = get_midi_from_piece(piece)
-    print(f"* Playing piece({piece.title}) start...")
-    if piece.id == 7 and ENABLE_OSC:  # Ave Maria
-        osc_client.send_message("/cue/7/start")
+    # print(f"* Playing piece({piece.title, piece.id}) start...")
+    # if ENABLE_OSC and (piece.id == 7 or piece.id == 56):  # Ave Maria
+    #     print("osc_start")
+    #     osc_client.send_message("/cue/1/start")
     midi_port.send(midi)
     print(f"* Playing piece({piece.title}) Ended.")
 

@@ -11,6 +11,7 @@ from ..config import (
     HUMAN_PLAYER,
     METRIC,
     SAMPLE_RATE,
+    ENABLE_OSC,
 )
 from ..models import Piece, SubPiece
 from ..redis import redis_client
@@ -19,6 +20,7 @@ from .midiport import midi_port
 from .online_dtw import OLTW
 from .stream_processor import sp
 from .utils import get_audio_path_from_midi_path, get_midi_from_piece
+from .osc_connector import osc_client
 
 
 class RelayPerformer:
@@ -136,6 +138,9 @@ remaining schedules count: {len(self.schedules)}"""
         print(f"start_playing!, current subpiece: {self.current_subpiece}")
         midi = get_midi_from_piece(self.current_subpiece)
         print(f"play {self.current_subpiece} start")
+        # if ENABLE_OSC and self.current_subpiece.id == 56:  # Ave Maria
+        #     print("osc_start")
+        #     osc_client.send_message("/cue/AIP/start")
         start_time = time.time()
         midi_port.send(midi)
         print(f"play {self.current_subpiece} end")

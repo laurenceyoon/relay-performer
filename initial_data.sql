@@ -16,6 +16,7 @@ INSERT INTO pieces VALUES(3,'Happy_Birthday_To_You_C_Major','./resources/midi/fu
 INSERT INTO pieces VALUES(4,'Haydn_Hob._XVI34_1._Presto','./resources/midi/full/Haydn_Hob._XVI34_1._Presto.mid');
 INSERT INTO pieces VALUES(5,'Haydn_Hob._XVI34_2.Adagio','./resources/midi/full/Haydn_Hob._XVI34_2.Adagio.mid');
 INSERT INTO pieces VALUES(6,'Haydn_Hob._XVI34_3.Molto_Vivace','./resources/midi/full/Haydn_Hob._XVI34_3.Molto_Vivace.mid');
+INSERT INTO pieces VALUES(7,'Ave Maria','../resources/midi/full/avemaria.mid');
 CREATE TABLE subpieces (
 	id INTEGER NOT NULL, 
 	title VARCHAR, 
@@ -39,7 +40,7 @@ INSERT INTO subpieces VALUES(12,'Haydn_Hob.XVI34_1-11','./resources/midi/subpiec
 INSERT INTO subpieces VALUES(13,'Haydn_Hob.XVI34_1-12','./resources/midi/subpieces/Haydn_Hob.XVI34_1-12.mid',4,0.0);
 INSERT INTO subpieces VALUES(14,'Haydn_Hob.XVI34_1-13','./resources/midi/subpieces/Haydn_Hob.XVI34_1-13.mid',4,0.9);
 INSERT INTO subpieces VALUES(15,'Haydn_Hob.XVI34_1-14','./resources/midi/subpieces/Haydn_Hob.XVI34_1-14.mid',4,0.0);
-INSERT INTO subpieces VALUES(16,'Haydn_Hob.XVI34_1-15','./resources/midi/subpieces/Haydn_Hob.XVI34_1-15.mid',4,1.8600000000000001421);
+INSERT INTO subpieces VALUES(16,'Haydn_Hob.XVI34_1-15','./resources/midi/subpieces/Haydn_Hob.XVI34_1-15.mid',4,1.8600000000000003197);
 INSERT INTO subpieces VALUES(17,'Haydn_Hob.XVI34_1-16','./resources/midi/subpieces/Haydn_Hob.XVI34_1-16.mid',4,0.0);
 INSERT INTO subpieces VALUES(18,'Haydn_Hob.XVI34_1-17','./resources/midi/subpieces/Haydn_Hob.XVI34_1-17.mid',4,1.1999999999999999644);
 INSERT INTO subpieces VALUES(19,'Haydn_Hob.XVI34_1-18','./resources/midi/subpieces/Haydn_Hob.XVI34_1-18.mid',4,0.0);
@@ -78,6 +79,8 @@ INSERT INTO subpieces VALUES(51,'Haydn_Hob.XVI34_3-16','./resources/midi/subpiec
 INSERT INTO subpieces VALUES(52,'Haydn_Hob.XVI34_3-17','./resources/midi/subpieces/Haydn_Hob.XVI34_3-17.mid',6,0.0);
 INSERT INTO subpieces VALUES(53,'Haydn_Hob.XVI34_3-18','./resources/midi/subpieces/Haydn_Hob.XVI34_3-18.mid',6,1.0);
 INSERT INTO subpieces VALUES(54,'Haydn_Hob.XVI34_3-19','./resources/midi/subpieces/Haydn_Hob.XVI34_3-19.mid',6,0.0);
+INSERT INTO subpieces VALUES(55,'Ave Maria 1','./resources/midi/subpieces/avemaria_1.mid',7,0.0);
+INSERT INTO subpieces VALUES(56,'Ave Maria 2','./resources/midi/subpieces/avemaria_2.mid',7,0.0);
 CREATE TABLE schedules (
 	id INTEGER NOT NULL, 
 	start_measure INTEGER, 
@@ -144,6 +147,8 @@ INSERT INTO schedules VALUES(52,172,180,'Pianist',6,51);
 INSERT INTO schedules VALUES(53,180,190,'VirtuosoNet',6,52);
 INSERT INTO schedules VALUES(54,190,198,'Pianist',6,53);
 INSERT INTO schedules VALUES(55,199,200,'VirtuosoNet',6,54);
+INSERT INTO schedules VALUES(56,0,4,'Pianist',7,55);
+INSERT INTO schedules VALUES(57,5,16,'VirtuosoNet',7,56);
 CREATE INDEX ix_pieces_id ON pieces (id);
 CREATE INDEX ix_pieces_title ON pieces (title);
 CREATE INDEX ix_subpieces_id ON subpieces (id);
