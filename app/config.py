@@ -1,4 +1,3 @@
-from enum import IntEnum
 from pathlib import Path
 import numpy as np
 
@@ -15,7 +14,7 @@ METRIC = "cosine"
 NORM = np.inf
 
 # config for MIDI Port
-MIDI_PORT_NAME = "Scarlett 8i6 USB"  # "USB MIDI" or None
+MIDI_PORT_NAME = None  # "USB MIDI" or None
 CONNECTION_INTERVAL = 5
 
 # config for CRNN classifier model
