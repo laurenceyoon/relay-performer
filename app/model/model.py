@@ -1,9 +1,9 @@
-import torch
-from torch.nn import functional as F
-from torch import nn
-from .feature_extractor import FeatureExtractor
 import librosa
 import numpy as np
+import torch
+from torch import nn
+
+from .feature_extractor import FeatureExtractor
 
 
 class ConvStack(nn.Module):

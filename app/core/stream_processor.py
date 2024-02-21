@@ -1,13 +1,14 @@
+import queue
+import threading
+import time
+from typing import Optional
+
 import librosa
 import numpy as np
 import pyaudio
-import queue
-from typing import Optional
-import time
-import threading
 import soundfile as sf
 
-from ..config import CHUNK_SIZE, HOP_LENGTH, SAMPLE_RATE, CHANNELS, N_FFT, FEATURES
+from ..config import CHANNELS, CHUNK_SIZE, FEATURES, HOP_LENGTH, N_FFT, SAMPLE_RATE
 from .utils import process_chroma, process_phonemes
 
 

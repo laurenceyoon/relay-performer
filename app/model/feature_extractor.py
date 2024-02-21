@@ -1,9 +1,10 @@
-from numpy import fmin
-from torch.nn import functional as F
-from torch import nn
-from torchaudio import transforms as T
-from nnAudio import Spectrogram as S
 import torch
+from nnAudio import Spectrogram as S
+from numpy import fmin
+from torch import nn
+from torch.nn import functional as F
+from torchaudio import transforms as T
+
 from app.config import N_MELS
 
 

@@ -7,7 +7,7 @@ import numpy as np
 import scipy
 from tqdm import tqdm
 
-from ..config import FEATURES, METRIC
+from ..config import ADJUST_TEMPO, FEATURES, METRIC
 from ..redis import redis_client
 from .stream_processor import StreamProcessor
 from .utils import crnn_model, process_chroma, process_phonemes
@@ -331,12 +331,6 @@ class OLTW:
             self.previous_direction = direction
             self.iteration += 1
 
-            # if duration is None:
-            #     duration = int(librosa.get_duration(filename=self.ref_audio_file)) + 1
-            # if h and hfig and fig:
-            #     h.set_data(self.target_features[:, : FRAME_RATE * duration])
-            #     hfig.update(fig)
-
         if self.is_running:
             pbar.set_description(
                 f"[{self.ref_pointer}/{self.ref_total_length}, {int(self.ref_pointer/self.ref_total_length*100)}%] ref: {self.ref_pointer}, target: {self.target_pointer}"
@@ -345,7 +339,10 @@ class OLTW:
                 self.candi_history[-1][0] - last_ref_checkpoint + self.frame_per_seg
             )
             self.stop()
-            redis_client.set("speed", self.ref_total_length / self.target_pointer)
+
+            # save play speed to redis
+            if ADJUST_TEMPO:
+                redis_client.set("speed", self.ref_total_length / self.target_pointer)
 
     def stop(self):
         self.is_running = False

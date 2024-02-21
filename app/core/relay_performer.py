@@ -1,3 +1,4 @@
+import os
 import time
 from collections import deque
 
@@ -106,14 +107,12 @@ class RelayPerformer:
             self.current_subpiece.path
         )
 
-        # replace alignment
         self.odtw = OLTW(
             sp,
             ref_audio_path=current_subpiece_audio_path.as_posix(),
             window_size=DTW_WINDOW_SIZE,  # window size: 3 sec
             sample_rate=SAMPLE_RATE,
             hop_length=HOP_LENGTH,
-            max_run_count=3,
             metric=METRIC,
             features=FEATURES,
         )
@@ -128,24 +127,26 @@ class RelayPerformer:
     def start_playing(self):
         print(
             f"""
-\n🎹 switch player to VirtuosoNet 🤖 🎹
+\n🎹 switch player to {self.current_schedule.player} 🤖 🎹
 Playback Speed: {float(redis_client.get("speed"))}
 remaining schedules count: {len(self.schedules)}"""
         )
-        self.force_quit_flag = False
-        print(f"start_playing!, current subpiece: {self.current_subpiece}")
-        midi = get_midi_from_piece(self.current_subpiece)
-        print(f"play {self.current_subpiece} start")
-        # if ENABLE_OSC and self.current_subpiece.id == 56:  # Ave Maria
-        #     print("osc_start")
-        #     osc_client.send_message("/cue/AIP/start")
-        start_time = time.time()
-        midi_port.play(midi)
-        print(f"play {self.current_subpiece} end")
-        midi_port.panic()
+        if self.current_subpiece.is_midi():
+            self.force_quit_flag = False
+            print(f"start_playing!, current subpiece: {self.current_subpiece}")
+            midi = get_midi_from_piece(self.current_subpiece)
+            print(f"play {self.current_subpiece} start")
 
-        print(f"duration: {time.time() - start_time}")
-        self.switch()
+            start_time = time.time()
+            midi_port.play(midi)
+            print(f"play {self.current_subpiece} end")
+            midi_port.panic()
+
+            print(f"duration: {time.time() - start_time}")
+            self.switch()
+        else:  # Audio (MAX/MSP)
+            osc_client.send_message(f"/start/{self.current_subpiece.id}")
+            # switch to next schedule when receiving OSC message (helper: switch_to_next_schedule)
 
     def force_quit(self):
         self.force_quit_flag = True

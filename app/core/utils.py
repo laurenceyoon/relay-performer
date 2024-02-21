@@ -1,12 +1,13 @@
 from pathlib import Path
+
+import librosa
 import mido
 import numpy as np
-import librosa
 import torch
 from attributedict.collections import AttributeDict
 
+from ..config import CRNN_MODEL_PATH, HOP_LENGTH, N_FFT, NORM, SAMPLE_RATE
 from ..model.model import CRNN
-from ..config import SAMPLE_RATE, HOP_LENGTH, N_FFT, NORM, CRNN_MODEL_PATH
 
 save_data = torch.load(CRNN_MODEL_PATH, map_location="mps")
 model_state_dict = save_data["model_state_dict"]

@@ -3,10 +3,8 @@ import asyncio
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..config import ENABLE_OSC
 from ..models import Piece, Schedule
 from .midi_controller import midi_port
-from .osc_connector import osc_client
 from .relay_performer import RelayPerformer
 from .stream_processor import sp
 from .utils import get_midi_from_piece
@@ -16,10 +14,6 @@ relay_performer = None
 
 def play_piece_to_outport(piece: Piece):
     midi = get_midi_from_piece(piece)
-    # print(f"* Playing piece({piece.title, piece.id}) start...")
-    # if ENABLE_OSC and (piece.id == 7 or piece.id == 56):  # Ave Maria
-    #     print("osc_start")
-    #     osc_client.send_message("/cue/1/start")
     midi_port.play(midi)
     print(f"* Playing piece({piece.title}) Ended.")
 
@@ -64,6 +58,10 @@ def start_relay_performance(piece: Piece, start_from=1):
     load_piece_for_relay_performance(piece, start_from)
     print(f"\n🎹 Let's play! {piece.title} 🎹")
     relay_performer.start_performance()
+
+
+def switch_to_next_schedule():
+    relay_performer.switch()
 
 
 def get_current_state():

@@ -1,5 +1,4 @@
 # %%
-import mido
 from mido import MidiFile, MidiTrack
 
 # %%

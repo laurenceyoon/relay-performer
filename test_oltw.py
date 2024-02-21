@@ -1,21 +1,13 @@
 # %%
 import librosa
 import librosa.display
-import pyaudio
-import queue
-from typing import Optional
-import numpy as np
-import time
 import matplotlib.pyplot as plt
-import datetime
-from collections import deque
-import IPython.display
-from IPython.display import clear_output
-from functools import partial
+import numpy as np
 import scipy
-from app.core.stream_processor import sp
-from app.core.online_dtw import OLTW
+
 from app.config import *
+from app.core.online_dtw import OLTW
+from app.core.stream_processor import sp
 
 # %%
 ref_audio_path = "./resources/audio/Haydn_Hob.XVI34_1-1.wav"
@@ -29,7 +21,7 @@ odtw = OLTW(
     window_size=DTW_WINDOW_SIZE,  # window size: 3 sec
     sample_rate=SAMPLE_RATE,
     hop_length=HOP_LENGTH,
-    max_run_count=3,
+    max_run_count=30,
     metric=METRIC,
     features=FEATURES,
 )

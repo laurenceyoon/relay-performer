@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -32,6 +32,9 @@ class SubPiece(Base):
 
     def __str__(self) -> str:
         return f"{self.title}"
+
+    def is_midi(self) -> bool:
+        return self.path.endswith(".mid") or self.path.endswith(".midi")
 
 
 class Schedule(Base):

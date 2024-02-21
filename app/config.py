@@ -1,15 +1,15 @@
 from pathlib import Path
+
 import numpy as np
 
-
 CHANNELS = 1
-SAMPLE_RATE = 16000
-HOP_LENGTH = 640
+SAMPLE_RATE = 22050
+HOP_LENGTH = 512
 CHUNK_SIZE = 4 * HOP_LENGTH
 N_FFT = 2 * HOP_LENGTH
-FRAME_RATE = SAMPLE_RATE / HOP_LENGTH  # 1초당 25 프레임
+FRAME_RATE = int(SAMPLE_RATE / HOP_LENGTH)  # 1초당 프레임 개수
 DTW_WINDOW_SIZE = int(3 * FRAME_RATE)  # 3초
-FEATURES = ["chroma", "phoneme"]  # chroma, mel, phoneme
+FEATURES = ["chroma"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
 
@@ -21,11 +21,12 @@ CONNECTION_INTERVAL = 5
 CRNN_MODEL_PATH = Path("./app/model/uni-5cls-640hop.pt")
 N_MELS = 66
 
-SOUND_FONT_PATH = "~/Library/Audio/Sounds/Banks/GeneralUser\ GS\ v1.471.sf2"
+# config for RelayPerformer
 AI_PLAYER = "VirtuosoNet"
 HUMAN_PLAYER = "Pianist"
+ENABLE_OSC = True
+ADJUST_TEMPO = False
 
 # config for OSC connection
-OSC_CLIENT_IP = "192.168.50.201"
+OSC_CLIENT_IP = "127.0.0.1"
 OSC_CLIENT_PORT = 53000
-ENABLE_OSC = False
