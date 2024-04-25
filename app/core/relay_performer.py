@@ -79,7 +79,7 @@ class RelayPerformer:
         self.force_quit_flag = False
 
     def is_human_pianist_playing(self):
-        return self.current_player == HUMAN_PLAYER
+        return self.current_player in HUMAN_PLAYER
 
     def switch(self):
         if not self.schedules or self.force_quit_flag:
@@ -94,9 +94,9 @@ class RelayPerformer:
         self.move_to_next()  # trigger
 
     def cleanup_following(self):
-        if self.odtw is not None:
-            self.odtw.stop()
-        self.odtw = None
+        if self.oltw is not None:
+            self.oltw.stop()
+        self.oltw = None
 
     def start_following(self):
         print("\n🎹 switch player to Pianist 👩 🎹")
@@ -107,7 +107,7 @@ class RelayPerformer:
             self.current_subpiece.path
         )
 
-        self.odtw = OLTW(
+        self.oltw = OLTW(
             sp,
             ref_audio_path=current_subpiece_audio_path.as_posix(),
             window_size=DTW_WINDOW_SIZE,  # window size: 3 sec
@@ -117,7 +117,7 @@ class RelayPerformer:
             features=FEATURES,
         )
         start_time = time.time()
-        self.odtw.run()
+        self.oltw.run()
         if not self.force_quit_flag:
             estimated_time_remaining = max(self.current_subpiece.etr - 0.7, 0)
             time.sleep(estimated_time_remaining)  # sleep for estimated time remaining

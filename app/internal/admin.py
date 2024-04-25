@@ -20,7 +20,8 @@ class PieceAdmin(ModelView, model=Piece):
 
 class SubPieceAdmin(ModelView, model=SubPiece):
     icon = "fa-solid fa-music"
-    column_list = [SubPiece.id, SubPiece.title]
+    column_list = [SubPiece.id, SubPiece.title, SubPiece.path]
+    page_size = 100
 
 
 class ScheduleAdmin(ModelView, model=Schedule):
@@ -30,4 +31,6 @@ class ScheduleAdmin(ModelView, model=Schedule):
         Schedule.piece_id,
         Schedule.subpiece_id,
         Schedule.player,
+        Schedule.subpiece,
     ]
+    page_size = 100

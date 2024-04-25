@@ -50,16 +50,12 @@ def process_chroma(y, sr=SAMPLE_RATE, hop_length=HOP_LENGTH, n_fft=N_FFT, norm=N
         norm=norm,
         center=False,
     )
-    # chroma_stft = np.log1p(chroma_stft * 5) / 4
-    chroma_stft = scale_with_sigmoid((chroma_stft - 0.5) * 10)
+    chroma_stft = np.log1p(chroma_stft * 5) / 4
+    # chroma_stft = scale_with_sigmoid((chroma_stft - 0.5) * 10)
     return chroma_stft
 
 
 def process_phonemes(y):
-    # if not real_time:
-    #     padding = np.zeros(HOP_LENGTH)
-    #     y = np.concatenate((padding, y, padding))
-
     x_tensor = torch.from_numpy(y).float().to("mps")
 
     with torch.no_grad():
@@ -67,7 +63,7 @@ def process_phonemes(y):
         batch["audio"] = x_tensor.unsqueeze(0)
         predictions = crnn_model.run_on_batch(batch, cal_loss=False)
 
-    phonemes = predictions["frame"].squeeze().T.cpu().numpy()  # [39, T]
+    phonemes = predictions["frame"].squeeze().T.cpu().numpy()  # [5, T]
     phonemes = phonemes[:, 1:-1]  # remove <sos> and <eos>
     phonemes = softmax_with_temperature(phonemes, T=1)
     phonemes = np.log1p(phonemes * 5) / 4

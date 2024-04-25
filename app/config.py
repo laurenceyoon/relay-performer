@@ -8,7 +8,7 @@ HOP_LENGTH = 512
 CHUNK_SIZE = 4 * HOP_LENGTH
 N_FFT = 2 * HOP_LENGTH
 FRAME_RATE = int(SAMPLE_RATE / HOP_LENGTH)  # 1초당 프레임 개수
-DTW_WINDOW_SIZE = int(3 * FRAME_RATE)  # 3초
+DTW_WINDOW_SIZE = int(1 * FRAME_RATE)  # 3초
 FEATURES = ["chroma"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
@@ -23,7 +23,7 @@ N_MELS = 66
 
 # config for RelayPerformer
 AI_PLAYER = "VirtuosoNet"
-HUMAN_PLAYER = "Pianist"
+HUMAN_PLAYER = ["Pianist", "Human"]
 ENABLE_OSC = True
 ADJUST_TEMPO = False
 

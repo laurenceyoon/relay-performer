@@ -96,6 +96,7 @@ class OLTW:
         self.target_features = np.zeros(
             (self.ref_features.shape[0], self.ref_total_length * 2)
         )
+        self.w = min(self.w, self.ref_total_length)
 
     def init_dist_matrix(self):
         ref_stft_seg = self.ref_features[:, : self.ref_pointer]  # [F, M]
