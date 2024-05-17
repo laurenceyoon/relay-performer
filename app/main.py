@@ -8,6 +8,7 @@ from sqladmin import Admin
 from app.core.osc_connector import OSCServer
 
 from . import models
+from .config import ENABLE_OSC
 from .core.helpers import (
     all_stop_playing,
     close_stream,
@@ -92,6 +93,7 @@ def end_handler(address, *args):
     switch_to_next_schedule()
 
 
-osc_server = OSCServer("127.0.0.1", 8001)
-osc_server.add_handler("/end", end_handler)
-osc_server.start()
+if ENABLE_OSC:
+    osc_server = OSCServer("127.0.0.1", 8001)
+    osc_server.add_handler("/end", end_handler)
+    osc_server.start()

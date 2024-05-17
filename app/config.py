@@ -13,8 +13,8 @@ FEATURES = ["chroma"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
 
-# config for MIDI Port
-MIDI_PORT_NAME = None  # "USB MIDI" or None
+# config for MIDI Port ("USB MIDI", "YAMAHA USB Device Port1" or None)
+MIDI_PORT_NAME = None
 CONNECTION_INTERVAL = 5
 
 # config for CRNN classifier model
@@ -24,7 +24,7 @@ N_MELS = 66
 # config for RelayPerformer
 AI_PLAYER = "VirtuosoNet"
 HUMAN_PLAYER = ["Pianist", "Human"]
-ENABLE_OSC = True
+ENABLE_OSC = False
 ADJUST_TEMPO = False
 
 # config for OSC connection

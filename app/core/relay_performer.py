@@ -1,4 +1,3 @@
-import os
 import time
 from collections import deque
 
@@ -6,6 +5,7 @@ from transitions import Machine
 
 from ..config import (
     DTW_WINDOW_SIZE,
+    ENABLE_OSC,
     FEATURES,
     HOP_LENGTH,
     HUMAN_PLAYER,
@@ -144,7 +144,8 @@ remaining schedules count: {len(self.schedules)}"""
 
             print(f"duration: {time.time() - start_time}")
             self.switch()
-        else:  # Audio (MAX/MSP)
+
+        if ENABLE_OSC:  # Audio (MAX/MSP)
             osc_client.send_message(f"/start/{self.current_subpiece.id}")
             # switch to next schedule when receiving OSC message (helper: switch_to_next_schedule)
 

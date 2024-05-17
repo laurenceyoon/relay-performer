@@ -2,7 +2,7 @@ import threading
 
 from pythonosc import dispatcher, osc_message_builder, osc_server, udp_client
 
-from ..config import OSC_CLIENT_IP, OSC_CLIENT_PORT
+from ..config import OSC_CLIENT_IP, OSC_CLIENT_PORT, ENABLE_OSC
 
 
 class OSCClient:
@@ -16,7 +16,7 @@ class OSCClient:
         self.client.send(msg.build())
 
 
-osc_client = OSCClient(OSC_CLIENT_IP, OSC_CLIENT_PORT)
+osc_client = OSCClient(OSC_CLIENT_IP, OSC_CLIENT_PORT) if ENABLE_OSC else None
 
 
 class OSCServer:
