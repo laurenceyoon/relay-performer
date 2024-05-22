@@ -6,20 +6,22 @@ import numpy as np
 import torch
 from attributedict.collections import AttributeDict
 
-from ..config import CRNN_MODEL_PATH, HOP_LENGTH, N_FFT, NORM, SAMPLE_RATE
+from ..config import CRNN_MODEL_PATH, HOP_LENGTH, N_FFT, NORM, SAMPLE_RATE, USE_TORCH
 from ..model.model import CRNN
 
-save_data = torch.load(CRNN_MODEL_PATH, map_location="mps")
-model_state_dict = save_data["model_state_dict"]
-config = AttributeDict(save_data["config"])
-consts = AttributeDict(save_data["consts"])
-config.device = "mps"
+crnn_model = None
+if USE_TORCH:
+    save_data = torch.load(CRNN_MODEL_PATH, map_location="mps")
+    model_state_dict = save_data["model_state_dict"]
+    config = AttributeDict(save_data["config"])
+    consts = AttributeDict(save_data["consts"])
+    config.device = "mps"
 
-crnn_model = CRNN(config, consts)
-crnn_model.to("mps")
+    crnn_model = CRNN(config, consts)
+    crnn_model.to("mps")
 
-crnn_model.load_state_dict(model_state_dict, strict=False)
-crnn_model.eval()
+    crnn_model.load_state_dict(model_state_dict, strict=False)
+    crnn_model.eval()
 
 
 def get_audio_path_from_midi_path(midi_path):

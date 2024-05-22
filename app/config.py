@@ -18,6 +18,7 @@ MIDI_PORT_NAME = None
 CONNECTION_INTERVAL = 5
 
 # config for CRNN classifier model
+USE_TORCH = "phoneme" in FEATURES
 CRNN_MODEL_PATH = Path("./app/model/uni-5cls-640hop.pt")
 N_MELS = 66
 
