@@ -4,7 +4,7 @@ import time
 import mido
 from mido import MidiFile
 
-from ..config import CONNECTION_INTERVAL, MIDI_PORT_NAME
+from ..config import CONNECTION_INTERVAL, MIDI_PORT_NAME, ADJUST_TEMPO
 from ..redis import redis_client
 
 DEFAULT_SPEED = 1
@@ -41,23 +41,24 @@ class MidiPort:
         self.is_running = True
 
         # start playing
-        # adaptive tempo
-        for msg in midi:
-            if self.is_running:
-                if not msg.is_meta:
-                    speed = float(redis_client.get("speed")) or DEFAULT_SPEED
-                    time.sleep(msg.time * 1 / speed)
+        if ADJUST_TEMPO:
+            for msg in midi:
+                if self.is_running:
+                    if not msg.is_meta:
+                        speed = float(redis_client.get("speed")) or DEFAULT_SPEED
+                        time.sleep(msg.time * 1 / speed)
+                        self.outport.send(msg)
+                else:
+                    print("Stop sending MIDI messages!")
+                    return
+        else:
+            for msg in midi.play():
+                if self.is_running:
                     self.outport.send(msg)
-            else:
-                print("Stop sending MIDI messages!")
-                return
+                else:
+                    print("Stop sending MIDI messages!")
+                    return
 
-        # for msg in midi.play():
-        #     if self.is_running:
-        #         self.outport.send(msg)
-        #     else:
-        #         print("Stop sending MIDI messages!")
-        #         return
         # end of playing
         self.is_running = False
 
