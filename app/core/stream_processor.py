@@ -9,7 +9,7 @@ import pyaudio
 import soundfile as sf
 
 from ..config import CHANNELS, CHUNK_SIZE, FEATURES, HOP_LENGTH, N_FFT, SAMPLE_RATE
-from .utils import process_chroma, process_phonemes
+from .utils import process_chroma, process_mfcc, process_phonemes
 
 
 class StreamProcessor:
@@ -52,6 +52,11 @@ class StreamProcessor:
                 y_chroma = process_chroma(y)
                 y_feature = (
                     y_chroma if y_feature is None else np.vstack((y_feature, y_chroma))
+                )
+            elif feature == "mfcc":
+                y_mfcc = process_mfcc(y)
+                y_feature = (
+                    y_mfcc if y_feature is None else np.vstack((y_feature, y_mfcc))
                 )
             elif feature == "phoneme":
                 y_phoneme = process_phonemes(y)

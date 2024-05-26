@@ -6,7 +6,15 @@ import numpy as np
 import torch
 from attributedict.collections import AttributeDict
 
-from ..config import CRNN_MODEL_PATH, HOP_LENGTH, N_FFT, NORM, SAMPLE_RATE, USE_TORCH
+from ..config import (
+    CRNN_MODEL_PATH,
+    HOP_LENGTH,
+    N_FFT,
+    N_MFCC,
+    NORM,
+    SAMPLE_RATE,
+    USE_TORCH,
+)
 from ..model.model import CRNN
 
 crnn_model = None
@@ -52,9 +60,27 @@ def process_chroma(y, sr=SAMPLE_RATE, hop_length=HOP_LENGTH, n_fft=N_FFT, norm=N
         norm=norm,
         center=False,
     )
-    chroma_stft = np.log1p(chroma_stft * 5) / 4
-    # chroma_stft = scale_with_sigmoid((chroma_stft - 0.5) * 10)
+    # chroma_stft = np.log1p(chroma_stft * 5) / 4
     return chroma_stft
+
+
+def process_mfcc(
+    y,
+    sr=SAMPLE_RATE,
+    hop_length=HOP_LENGTH,
+    n_mfcc=N_MFCC,
+    n_fft=N_FFT,
+):
+    mfcc = librosa.feature.mfcc(
+        y=y,
+        sr=sr,
+        n_mfcc=n_mfcc,
+        hop_length=hop_length,
+        n_fft=n_fft,
+        center=False,
+    )
+    mfcc = np.log1p(mfcc * 5) / 4
+    return mfcc
 
 
 def process_phonemes(y):

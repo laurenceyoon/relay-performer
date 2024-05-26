@@ -10,7 +10,7 @@ from tqdm import tqdm
 from ..config import ADJUST_TEMPO, FEATURES, METRIC
 from ..redis import redis_client
 from .stream_processor import StreamProcessor
-from .utils import crnn_model, process_chroma, process_phonemes
+from .utils import crnn_model, process_chroma, process_mfcc, process_phonemes
 
 MAX_LEN = int(1e4)
 
@@ -73,6 +73,11 @@ class OLTW:
                     if ref_feature is None
                     else np.vstack((ref_feature, y_chroma))
                 )
+            elif feature == "mfcc":
+                y_mfcc = process_mfcc(audio_y)
+                ref_feature = (
+                    y_mfcc if ref_feature is None else np.vstack((ref_feature, y_mfcc))
+                )
             elif feature == "phoneme":
                 y_phonemes = process_phonemes(audio_y)
                 if ref_feature is not None:
@@ -94,7 +99,7 @@ class OLTW:
             (self.ref_total_length * 2, self.ref_total_length * 2)
         )
         self.target_features = np.zeros(
-            (self.ref_features.shape[0], self.ref_total_length * 2)
+            (self.ref_features.shape[0], self.ref_total_length * 3)
         )
         self.w = min(self.w, self.ref_total_length)
 
@@ -287,9 +292,18 @@ class OLTW:
         #  get only one input at a time
         target_feature = self.sp.feature_buffer.get()["feature"]
         q_length = self.frame_per_seg
-        self.target_features[
-            :, self.target_pointer : self.target_pointer + q_length
-        ] = target_feature
+        if self.target_features.shape[1] < self.target_pointer + q_length:
+            self.target_features = np.concatenate(
+                (
+                    self.target_features,
+                    target_feature,
+                ),
+                axis=1,
+            )
+        else:
+            self.target_features[
+                :, self.target_pointer : self.target_pointer + q_length
+            ] = target_feature
         self.target_pointer += q_length
 
     def _check_run_time(self, start_time, duration):

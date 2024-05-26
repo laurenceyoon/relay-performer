@@ -36,6 +36,7 @@ class RelayPerformer:
         self.current_schedule: Schedule = self.schedules.popleft()
         self.current_player = self.current_schedule.player
         self.current_subpiece: SubPiece = self.current_schedule.subpiece
+        self.oltw = None
 
         self.machine = Machine(
             model=self, states=RelayPerformer.states, initial="asleep"
@@ -110,7 +111,7 @@ class RelayPerformer:
         self.oltw = OLTW(
             sp,
             ref_audio_path=current_subpiece_audio_path.as_posix(),
-            window_size=DTW_WINDOW_SIZE,  # window size: 3 sec
+            window_size=DTW_WINDOW_SIZE,
             sample_rate=SAMPLE_RATE,
             hop_length=HOP_LENGTH,
             metric=METRIC,
