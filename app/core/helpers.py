@@ -54,7 +54,9 @@ def load_piece_for_relay_performance(piece: Piece, start_from=1):
     relay_performer = RelayPerformer(piece=piece, start_from=start_from)
 
 
-def start_relay_performance(piece: Piece, start_from=1):
+def start_relay_performance(piece: Piece, start_from=1, force=False):
+    if force and relay_performer is not None:
+        relay_performer.stop_performance()
     load_piece_for_relay_performance(piece, start_from)
     print(f"\n🎹 Let's play! {piece.title} 🎹")
     relay_performer.start_performance()

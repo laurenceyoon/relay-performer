@@ -40,10 +40,14 @@ def relay_perform_piece(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     start_from=1,
+    force=True,
 ):
     piece = crud.get_piece_by_id(db, piece_id=piece_id)
     background_tasks.add_task(
-        start_relay_performance, piece=piece, start_from=int(start_from)
+        start_relay_performance,
+        piece=piece,
+        start_from=int(start_from),
+        force=force,
     )
     return {"response": f"following title({piece.title})"}
 
