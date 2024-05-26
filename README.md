@@ -46,10 +46,10 @@ $ conda activate rpf
 
 ```bash
 # rebuild db
-$ sqlite3 ./sql_app.db < initial_data.sql
+$ sqlite3 ./db/rpf.db < init_rpf_.sql
 
 # start app
-$ uvicorn app.main:app --reload
+$ ./start_app.sh
 ```
 
 ![](./img/run_example.png)

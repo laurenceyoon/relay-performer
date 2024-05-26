@@ -100,7 +100,7 @@ class RelayPerformer:
         self.oltw = None
 
     def start_following(self):
-        print("\n🎹 switch player to Pianist 👩 🎹")
+        print(f"\n🎹 switch player to {self.current_player} 👩 🎹")
         print(f"remaining schedules count: {len(self.schedules)}")
         self.force_quit_flag = False
         print(f"start following!, current subpiece: {self.current_subpiece}")
