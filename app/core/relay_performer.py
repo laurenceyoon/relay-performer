@@ -9,6 +9,7 @@ from ..config import (
     FEATURES,
     HOP_LENGTH,
     HUMAN_PLAYER,
+    MAX_RUN_COUNT,
     METRIC,
     SAMPLE_RATE,
 )
@@ -116,6 +117,7 @@ class RelayPerformer:
             hop_length=HOP_LENGTH,
             metric=METRIC,
             features=FEATURES,
+            max_run_count=MAX_RUN_COUNT,
         )
         start_time = time.time()
         self.oltw.run()

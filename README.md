@@ -50,6 +50,7 @@ $ sqlite3 ./db/rpf.db < init_rpf_.sql
 
 # start app
 $ ./start_app.sh
+
 ```
 
 ![](./img/run_example.png)

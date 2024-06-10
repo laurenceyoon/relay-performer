@@ -5,11 +5,12 @@ import numpy as np
 CHANNELS = 1
 SAMPLE_RATE = 22050
 HOP_LENGTH = 512
-CHUNK_SIZE = 4 * HOP_LENGTH
+CHUNK_SIZE = HOP_LENGTH
 N_FFT = 2 * HOP_LENGTH
 N_MFCC = 5
 FRAME_RATE = int(SAMPLE_RATE / HOP_LENGTH)  # 1초당 프레임 개수
 DTW_WINDOW_SIZE = int(2 * FRAME_RATE)
+MAX_RUN_COUNT = 30
 FEATURES = ["chroma"]  # chroma, mel, phoneme
 METRIC = "cosine"
 NORM = np.inf
@@ -26,9 +27,9 @@ N_MELS = 66
 # config for RelayPerformer
 AI_PLAYER = "VirtuosoNet"
 HUMAN_PLAYER = ["Pianist", "Human"]
-ENABLE_OSC = False
 ADJUST_TEMPO = False
 
 # config for OSC connection
+ENABLE_OSC = False
 OSC_CLIENT_IP = "127.0.0.1"
 OSC_CLIENT_PORT = 53000

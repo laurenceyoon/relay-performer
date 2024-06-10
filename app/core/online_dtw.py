@@ -313,7 +313,7 @@ class OLTW:
         return self.ref_pointer <= (self.ref_total_length - self.frame_per_seg)
 
     def run(self, fig=None, h=None, hfig=None, duration=None, mock=False):
-        pbar = tqdm(total=self.ref_total_length)
+        pbar = tqdm(total=self.ref_total_length, colour="#25E09A")
         self.sp.run(mock=mock)  # mic ON
 
         self.ref_pointer += self.w
