@@ -45,7 +45,7 @@ $ conda activate rpf
 ## Rebuild DB & Start App
 
 ```bash
-# rebuild db
+# rebuild db (if necessary)
 $ sqlite3 ./db/rpf.db < init_rpf_.sql
 
 # start app
