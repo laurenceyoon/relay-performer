@@ -19,14 +19,6 @@ If you're using Mac M1, please run the following command before creating a new c
 
 ```bash
 $ brew install portaudio
-$ brew --prefix portaudio # copy the path
-$ vim $HOME/.pydistutils.cfg
-
-# Then, add the following lines to the file.
-
-[build_ext]
-include_dirs=/--PATH--/include/
-library_dirs=/--PATH--/lib/
 ```
 
 Create a new conda environment and activate it.
@@ -42,12 +34,9 @@ $ conda activate rpf
     $ pip install --upgrade --force-reinstall soundfile
     ```
 
-## Rebuild DB & Start App
+## Start App
 
 ```bash
-# rebuild db (if necessary)
-$ sqlite3 ./db/rpf.db < init_rpf_.sql
-
 # start app
 $ ./start_app.sh
 

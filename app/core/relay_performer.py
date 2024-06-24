@@ -128,10 +128,15 @@ class RelayPerformer:
             self.switch()
 
     def start_playing(self):
+        play_speed = (
+            float(redis_client.get("speed"))
+            if redis_client.get("speed") is not None
+            else 1.0
+        )
         print(
             f"""
 \n🎹 switch player to {self.current_schedule.player} 🤖 🎹
-Playback Speed: {float(redis_client.get("speed"))}
+Playback Speed: {play_speed}
 remaining schedules count: {len(self.schedules)}"""
         )
         if self.current_subpiece.is_midi():
