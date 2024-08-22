@@ -27,9 +27,8 @@ def play_piece(
     if ADJUST_TEMPO:
         redis_client.set("speed", speed)
         print(f"~~~~~~~~~~~~~~~~~~~redis set speed to {speed}~~~~~~~~~~~~~~~~~~~")
-    db_piece = crud.get_piece_by_id(db, piece_id=piece_id)
-    background_tasks.add_task(play_piece_to_outport, piece=db_piece)
-    return {"response": f"playing title({db_piece.title}) on the background"}
+    background_tasks.add_task(play_piece_to_outport, piece_id=piece_id, db=db)
+    return {"response": f"playing title({piece_id}) on the background"}
 
 
 @router.patch(
@@ -44,14 +43,14 @@ def relay_perform_piece(
     start_from=1,
     force=True,
 ):
-    piece = crud.get_piece_by_id(db, piece_id=piece_id)
     background_tasks.add_task(
         start_relay_performance,
-        piece=piece,
+        piece_id=piece_id,
+        db=db,
         start_from=int(start_from),
         force=force,
     )
-    return {"response": f"following title({piece.title})"}
+    return {"response": f"following title({piece_id})"}
 
 
 @router.post("/{piece_id}/subpieces/", response_model=schemas.SubPiece, tags=["pieces"])

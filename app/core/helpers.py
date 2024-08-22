@@ -2,7 +2,9 @@ import asyncio
 
 import matplotlib.pyplot as plt
 import numpy as np
+from sqlalchemy.orm import Session
 
+from .. import crud
 from ..models import Piece, Schedule
 from .midi_controller import midi_port
 from .relay_performer import RelayPerformer
@@ -12,10 +14,11 @@ from .utils import get_midi_from_piece
 relay_performer = None
 
 
-def play_piece_to_outport(piece: Piece):
-    midi = get_midi_from_piece(piece)
+def play_piece_to_outport(piece_id: int, db: Session):
+    db_piece = crud.get_piece_by_id(db, piece_id=piece_id)
+    midi = get_midi_from_piece(db_piece)
     midi_port.play(midi)
-    print(f"* Playing piece({piece.title}) Ended.")
+    print(f"* Playing piece({db_piece.title}) Ended.")
 
 
 def set_playback_speed(speed: float):
@@ -54,7 +57,13 @@ def load_piece_for_relay_performance(piece: Piece, start_from=1):
     relay_performer = RelayPerformer(piece=piece, start_from=start_from)
 
 
-def start_relay_performance(piece: Piece, start_from=1, force=False):
+def start_relay_performance(
+    piece_id: int,
+    db: Session,
+    start_from=1,
+    force=False,
+):
+    piece = crud.get_piece_by_id(db, piece_id=piece_id)
     if force and relay_performer is not None:
         relay_performer.stop_performance()
     load_piece_for_relay_performance(piece, start_from)

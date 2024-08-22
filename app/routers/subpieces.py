@@ -14,26 +14,28 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.patch(
     "/{subpiece_id}/play",
     status_code=HTTPStatus.ACCEPTED,
     tags=["Interactive API"],
 )
 def play_subpiece(
-    subpiece_id: int, background_tasks: BackgroundTasks, db: Session = Depends(get_db), speed: float = 1
+    subpiece_id: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    speed: float = 1,
 ):
     redis_client.set("speed", speed)
-    db_subpiece = crud.get_subpiece(db, subpiece_id)
-    background_tasks.add_task(play_piece_to_outport, piece=db_subpiece)
-    return {"response": f"playing title({db_subpiece}) on the background"}
+    background_tasks.add_task(play_piece_to_outport, piece_id=subpiece_id, db=db)
+    return {"response": f"playing title({subpiece_id}) on the background"}
+
 
 @router.get("/", response_model=list[schemas.SubPiece])
 def read_subpieces(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_subpieces(db, skip=skip, limit=limit)
 
 
-@router.get(
-    "/{subpiece_id}", response_model=schemas.SubPiece
-)
+@router.get("/{subpiece_id}", response_model=schemas.SubPiece)
 def read_subpiece(subpiece_id: int, db: Session = Depends(get_db)):
     return crud.get_subpiece(db, subpiece_id=subpiece_id)
