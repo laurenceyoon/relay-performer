@@ -4,7 +4,7 @@ Relay Performer is an interactive music performance system which enables relay p
 The online time warping (OLTW) algorithm is implemented in this system, based on the paper [MATCH: A MUSIC ALIGNMENT TOOL CHEST](http://www.cp.jku.at/research/papers/dixon_ismir_2005.pdf) by Simon Dixon published at ISMIR2005.
 
 
-Tested on Python 3.10 (conda)
+Tested on Python 3.12 (conda)
 
 ## Preparing packages
 

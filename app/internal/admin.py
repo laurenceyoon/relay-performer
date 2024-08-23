@@ -16,11 +16,13 @@ class DocsView(BaseView):
 class PieceAdmin(ModelView, model=Piece):
     icon = "fa-solid fa-compact-disc"
     column_list = [Piece.id, Piece.title]
+    form_excluded_columns = ["subpieces", "schedules"]
 
 
 class SubPieceAdmin(ModelView, model=SubPiece):
     icon = "fa-solid fa-music"
     column_list = [SubPiece.id, SubPiece.title, SubPiece.path]
+    form_excluded_columns = ["schedules"]
     page_size = 100
 
 
